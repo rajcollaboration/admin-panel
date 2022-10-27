@@ -1,9 +1,50 @@
-import React,{useRef, useEffect} from 'react'
+import axios from 'axios';
+import React, { useRef, useEffect, useState } from 'react'
 import { MdSend } from 'react-icons/md';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHorizontalScroll } from '../Components/SideScroll';
+
 import '../css/products.css'
 function Products() {
+    const dispatch = useDispatch();
+    const { allProducts, allPackage } = useSelector((state) => state.products);
     const scrollRef = useHorizontalScroll();
+    const [allOffers, setAlloffers] = useState([]);
+    const getAllPackage = () => {
+        axios.get('api/packages/getallpackage')
+            .then(function (response) {
+                // handle success
+                dispatch({
+                    type: "getProducts",
+                    payload: response.data
+                });
+
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+    const handlePtype = async (title) => {
+        console.log(title);
+        axios.get(`api/packages/getallpackage/${title}`)
+            .then(function (response) {
+                // handle success
+                console.log(response.data);
+                dispatch({
+                    type: "getPackages",
+                    payload: response.data
+                })
+
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+    console.log(allOffers);
+    useEffect(() => {
+        getAllPackage();
+    }, []);
     return (
         <div>
             <div className="row">
@@ -11,82 +52,78 @@ function Products() {
                     <h1>Products</h1>
                 </div>
                 <nav aria-label="breadcrumb" className='margin-left mt-3'>
-                <ol className="breadcrumb">
-                  <li className="breadcrumb-item" ><a href="/" className='text-decoration-none'>Home</a></li>
-                  <li className="breadcrumb-item"><a href="/" className='text-decoration-none'>Library</a></li>
-                  <li className="breadcrumb-item active" aria-current="page">Data</li>
-                </ol>
-              </nav>
-              <div className="ourServices" ref={scrollRef}>
-                <div className='services_holder'>
-                <span>Web Development</span>
-                <span>Web Development</span>
-                <span>Web Development</span>
-                <span>Web Development</span>
-                <span>Web Development</span>
-                <span>Web Development</span>
-                <span>Web Development</span>
-                <span>Web Development</span>
-                <span>Web Development</span>
-                <span>Web Development</span>
-                <span>Web Development</span>
-                </div>
-                
-              </div>
-                <div className="col-md-4 col-sm-6">
-                    <div className="pricing-table-3 basic">
-                        <div className="pricing-table-header">
-                            <h4><strong>BASIC</strong></h4>
-                            <p>Loerm Ipsum Donor Sit Amet</p>
-                        </div>
-                        <div className="price"><strong>$3</strong> / MONTH</div>
-                        <div className="pricing-body">
-                            <ul className="pricing-table-ul">
-                                <li><i><MdSend /></i> Unlimited Email Addresses</li>
-                                <li><i><MdSend /></i> 50 GB Disk Space</li>
-                                <li><i><MdSend /></i> Unlimited MySQL Database</li>
-                                <li><i><MdSend /></i> 24X7 Support</li>
-                                <li><i><MdSend /></i> Email Support</li>
-                            </ul><a href="/" className="view-more">Buy Now</a></div>
+                    <ol className="breadcrumb">
+                        <li className="breadcrumb-item" ><a href="/" className='text-decoration-none'>Home</a></li>
+                        <li className="breadcrumb-item"><a href="/" className='text-decoration-none'>Library</a></li>
+                        <li className="breadcrumb-item active" aria-current="page">Data</li>
+                    </ol>
+                </nav>
+                <div className="ourServices" ref={scrollRef}>
+                    <div className='services_holder'>
+                        {
+                            allProducts ? allProducts.map((prdtitle, key) => (
+                                <span key={key} onClick={() => handlePtype(prdtitle.title)}>{prdtitle.title}</span>
+                            )) : ""
+                        }
                     </div>
+
                 </div>
-                <div className="col-md-4 col-sm-6">
-                    <div className="pricing-table-3 premium">
-                        <div className="pricing-table-header">
-                            <h4><strong>PREMIUM</strong></h4>
-                            <p>Loerm Ipsum Donor Sit Amet</p>
+
+                <h3 className="text-center mt-3 mb-3">{allPackage.length !== 0 ? allPackage[0].title : "Packages"}</h3>
+
+                {
+                    allPackage.length != 0 ? allPackage[0].packagesd.length > 0 ? <div className="col-md-4 col-sm-6">
+                        <div className="pricing-table-3 basic">
+                            <div className="pricing-table-header">
+                                <h4><strong>{allPackage[0].packagesd[0].name}</strong></h4>
+                                <p>Loerm Ipsum Donor Sit Amet</p>
+                            </div>
+                            <div className="price"><strong>{allPackage[0].packagesd[0].price}</strong> / PROJECT</div>
+                            <div className="pricing-body">
+                                <ul className="pricing-table-ul">
+                                    {
+
+                                    }
+                                    <li><i><MdSend /></i>{allPackage[0].packagesd[0].offers}</li>
+
+                                </ul><a href="/" className="view-more">Buy Now</a></div>
                         </div>
-                        <div className="price"><strong>$8</strong> / MONTH</div>
-                        <div className="pricing-body">
-                            <ul className="pricing-table-ul">
-                                <li><i><MdSend /></i> Unlimited Email Addresses</li>
-                                <li><i><MdSend /></i> 50 GB Disk Space</li>
-                                <li><i><MdSend /></i> Unlimited MySQL Database</li>
-                                <li><i><MdSend /></i> 24X7 Support</li>
-                                <li><i><MdSend /></i> Email Support</li>
-                            </ul><a href="/" className="view-more">Buy Now</a></div>
-                    </div>
-                </div>
-                <div className="col-md-4 col-sm-12">
-                    <div className="pricing-table-3 business">
-                        <div className="pricing-table-header">
-                            <h4><strong>BUSINESS</strong></h4>
-                            <p>Loerm Ipsum Donor Sit Amet</p>
+                    </div> : "Nothing to show"
+                        : ""}
+
+                {
+                    allPackage.length != 0 ? allPackage[0].packagesd.length >= 2 ? <div className="col-md-4 col-sm-6">
+                        <div className="pricing-table-3 premium">
+                            <div className="pricing-table-header">
+                                <h4><strong>{allPackage[0].packagesd[1].name}</strong></h4>
+                                <p>Loerm Ipsum Donor Sit Amet</p>
+                            </div>
+                            <div className="price"><strong>${allPackage[0].packagesd[1].price}</strong> / PROJECT</div>
+                            <div className="pricing-body">
+                                <ul className="pricing-table-ul">
+                                    <li><i><MdSend /></i>{allPackage[0].packagesd[1].offers}</li>
+                                </ul><a href="/" className="view-more">Buy Now</a></div>
                         </div>
-                        <div className="price"><strong>$12</strong> / MONTH</div>
-                        <div className="pricing-body">
-                            <ul className="pricing-table-ul">
-                                <li><i><MdSend /></i> Unlimited Email Addresses</li>
-                                <li><i><MdSend /></i> 50 GB Disk Space</li>
-                                <li><i><MdSend /></i> Unlimited MySQL Database</li>
-                                <li><i><MdSend /></i> 24X7 Support</li>
-                                <li><i><MdSend /></i> Email Support</li>
-                            </ul><a href="/" className="view-more">Buy Now</a></div>
-                    </div>
-                </div>
+                    </div> : ""
+                        : ""}
+                {
+                    allPackage.length != 0 ? allPackage[0].packagesd.length >= 3 ? <div className="col-md-4 col-sm-12">
+                        <div className="pricing-table-3 business">
+                            <div className="pricing-table-header">
+                                <h4><strong>{allPackage[0].packagesd[0].name}</strong></h4>
+                                <p>Loerm Ipsum Donor Sit Amet</p>
+                            </div>
+                            <div className="price"><strong>${allPackage[0].packagesd[2].price}</strong> / PROJECT</div>
+                            <div className="pricing-body">
+                                <ul className="pricing-table-ul">
+                                    <li><i><MdSend /></i>{allPackage[0].packagesd[2].offers}</li>
+                                </ul><a href="/" className="view-more">Buy Now</a></div>
+                        </div>
+                    </div> : ""
+                        : ""}
             </div>
         </div>
     )
 }
 
-export default Products
+export default Products;

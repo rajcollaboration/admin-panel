@@ -1,9 +1,49 @@
-import React from 'react';
+import React, { useState } from 'react';
 import  Logo  from "../assets/logo_white.png";
-import {Link} from 'react-router-dom';
+import {Link,useNavigate} from 'react-router-dom';
+import {useDispatch,useSelector} from 'react-redux';
 import '../css/login.css'
+import axios from 'axios';
 
 function Register() {
+    const history = useNavigate();
+    const dispatch = useDispatch();
+    const {inputError} = useSelector((state)=> state.auth);
+    const [registerData,setRegisterData] = useState();
+    
+    const handleInput = (e)=>{
+        e.preventDefault();
+        const name = e.target.name;
+        const value = e.target.value;
+
+        setRegisterData({...registerData,[name]:value});
+    }
+    console.log(inputError);
+    const handleSubmit = async(e)=>{
+        e.preventDefault();
+        await axios.post('api/auth/register', {
+            name: registerData.name,
+            email: registerData.email,
+            phoneNumber: registerData.phoneNumber,
+            pass: registerData.pass
+        })
+            .then(function (response) {
+                dispatch({
+                    type: "errorHandle",
+                    payload: "Registration SucessFully"
+                })
+                history("/login");
+            })
+            .catch(function (error) {
+                dispatch({
+                    type: "errorHandle",
+                    payload: "Invalid Input"
+                })
+            });
+    }
+
+    console.log(registerData);
+    
   return (
     <div>
     <div className="container">
@@ -28,30 +68,29 @@ function Register() {
                             <form style={{maxWidth:"500px",margin:'auto'}} className='justify-center'>
                                 <div className="input-container">
                                     <i className="fa fa-user icon"></i>
-                                    <input className="input-field regInput" type="text"placeholder="Username" name="name" />
+                                    <input className="input-field regInput" type="text"placeholder="Username" name="name" onChange={handleInput}/>
                                 </div>
 
                                 <div className="input-container">
                                     <i className="fa fa-envelope icon"></i>
-                                    <input className="input-field regInput" type="text" placeholder="Email" name="email"/>
+                                    <input className="input-field regInput" type="text" placeholder="Email" name="email" onChange={handleInput}/>
                                 </div>
 
                                 <div className="input-container">
                                     <i className="fa fa-phone icon"></i>
-                                    <input className="input-field regInput" type="text" placeholder="Phone" name="phoneNumber"/>
+                                    <input className="input-field regInput" type="text" placeholder="Phone" name="phoneNumber" onChange={handleInput}/>
                                 </div>
 
                                 <div className="input-container">
                                     <i className="fa fa-key icon"></i>
-                                    <input className="input-field regInput" type="password" placeholder="Password" name="pass"/>
+                                    <input className="input-field regInput" type="password" placeholder="Password" name="pass" onChange={handleInput}/>
                                 </div>
 
                                 <div className="regbutton input-container">
-                                <button type="submit" className="btnr mt-4">Register</button>
+                                <button type="submit" className="btnr mt-4" onClick={handleSubmit}>Register</button>
                                 </div>
                                 <p style={{textAlign:'center',paddingLeft:'45px',marginTop:'20px'}}>Already have an account ?  <Link to="/login">Login</Link></p>
                             </form>
-
                         </div>
                     </div>
                 </div>

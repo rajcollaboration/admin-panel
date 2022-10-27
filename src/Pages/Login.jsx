@@ -1,36 +1,33 @@
 import React, { useEffect, useState } from 'react'
 import Logo from "../assets/logo_white.png";
 import '../css/login.css';
-import { Link } from 'react-router-dom';
-import { useLocation } from "react-router-dom";
+import { Link,useNavigate } from 'react-router-dom';
+
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 
-
 function Login() {
+    const history = useNavigate();
     const dispatch = useDispatch();
     const { logindata } = useSelector((state) => state.auth);
-    const location = useLocation();
+   
     const [login, setLogin] = useState({
         userName: "",
         password: "",
     })
     const [loginError, setLoginError] = useState("");
     const [showToast, setShowToast] = useState(false);
-    console.log(logindata);
 
     const handleInput = (e) => {
         e.preventDefault();
         const name = e.target.name;
         const value = e.target.value;
-
-        setLogin({ ...login, [name]: value })
-        console.log(login);
+        setLogin({ ...login, [name]: value });
     }
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        await axios.post('auth/login', {
+        await axios.post('api/auth/login', {
             username: login.userName,
             password: login.password
         })
@@ -41,6 +38,7 @@ function Login() {
                     payload: response.data
                 });
                 setLoginError("login Successfull");
+                history("/");
             })
             .catch(function (error) {
 

@@ -34,6 +34,7 @@ body{
 {
   float: left;
   margin-right: 15px;
+  cursor: pointer;
 }
 h1,h2,h3,h4,h5,h6,div,input,p,a{
     font-family: "Open Sans";  
