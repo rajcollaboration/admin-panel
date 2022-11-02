@@ -11,7 +11,7 @@ function Products() {
     const scrollRef = useHorizontalScroll();
     const [allOffers, setAlloffers] = useState([]);
     const getAllPackage = () => {
-        axios.get('api/packages/getallpackage')
+        axios.get('api/packages/getallpackages')
             .then(function (response) {
                 // handle success
                 dispatch({
@@ -27,7 +27,9 @@ function Products() {
 
     const handlePtype = async (title) => {
         console.log(title);
-        axios.get(`api/packages/getallpackage/${title}`)
+        axios.post(`api/packages/getallpackagebytitle`,{
+            packagetitle:title
+        })
             .then(function (response) {
                 // handle success
                 console.log(response.data);
@@ -41,7 +43,7 @@ function Products() {
                 console.log(error);
             });
     }
-    console.log(allOffers);
+    console.log(allPackage);
     useEffect(() => {
         getAllPackage();
     }, []);
@@ -62,7 +64,7 @@ function Products() {
                     <div className='services_holder'>
                         {
                             allProducts ? allProducts.map((prdtitle, key) => (
-                                <span key={key} onClick={() => handlePtype(prdtitle.title)}>{prdtitle.title}</span>
+                                <span key={key} onClick={() => handlePtype(prdtitle.packagetitle)}>{prdtitle.packagetitle}</span>
                             )) : ""
                         }
                     </div>

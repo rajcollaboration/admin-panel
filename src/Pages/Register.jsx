@@ -22,10 +22,10 @@ function Register() {
     const handleSubmit = async(e)=>{
         e.preventDefault();
         await axios.post('api/auth/register', {
-            name: registerData.name,
+            username: registerData.name,
             email: registerData.email,
-            phoneNumber: registerData.phoneNumber,
-            pass: registerData.pass
+            phonenumber: registerData.phoneNumber,
+            password: registerData.pass
         })
             .then(function (response) {
                 dispatch({
